@@ -229,7 +229,7 @@ void Px4Comm::onVehicleOdometry(
   odometry_msg.twist.twist.angular.x = odom.angular_velocity.vector.x();
   odometry_msg.twist.twist.angular.y = odom.angular_velocity.vector.y();
   odometry_msg.twist.twist.angular.z = odom.angular_velocity.vector.z();
-  odometry_pub_->publish(odometry_msg);
+  // odometry_pub_->publish(odometry_msg);
 }
 
 }  // namespace ros2_uav
