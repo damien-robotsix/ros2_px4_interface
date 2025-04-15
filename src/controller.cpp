@@ -129,10 +129,14 @@ int main(int argc, char* argv[])
   auto timer = controller_node->create_wall_timer(
       std::chrono::milliseconds(10), [&pending_pose_target, &pending_hit, &pending_pose, &pipeline_manager]() {
         if (pending_pose && pipeline_manager->getPipelineName() == "NlmpcPosition") {
+          // small delay to allow the pipeline to be ready
+          std::this_thread::sleep_for(std::chrono::milliseconds(100));
           pending_pose = false;
           pipeline_manager->setInput<"NlmpcPosition", uav_cpp::types::PoseHeadingStamped>(pending_pose_target);
         }
         if (pending_hit && pipeline_manager->getPipelineName() == "NlmpcHit") {
+          // small delay to allow the pipeline to be ready
+          std::this_thread::sleep_for(std::chrono::milliseconds(100));
           pending_hit = false;
           pipeline_manager->setInput<"NlmpcHit", uav_cpp::types::PoseHeadingStamped>(pending_pose_target);
         }
