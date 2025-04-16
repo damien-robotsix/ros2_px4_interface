@@ -127,7 +127,7 @@ int main(int argc, char* argv[])
 
   // timer to send the pending pose
   auto timer = controller_node->create_wall_timer(
-      std::chrono::milliseconds(10), [&pending_pose_target, &pending_hit, &pending_pose, &pipeline_manager]() {
+      std::chrono::milliseconds(100), [&pending_pose_target, &pending_hit, &pending_pose, &pipeline_manager]() {
         if (pending_pose && pipeline_manager->getPipelineName() == "NlmpcPosition") {
           // small delay to allow the pipeline to be ready
           std::this_thread::sleep_for(std::chrono::milliseconds(100));
