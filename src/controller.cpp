@@ -184,7 +184,7 @@ int main(int argc, char* argv[])
 
   // Make a legacy service to get the origin
   auto get_origin_service = controller_node->create_service<arrc_interfaces::srv::GpsOrigin>(
-      "command/getOrigin", [&origin_reset](const std::shared_ptr<arrc_interfaces::srv::GpsOrigin::Request>,
+      "getOrigin", [&origin_reset](const std::shared_ptr<arrc_interfaces::srv::GpsOrigin::Request>,
                                            std::shared_ptr<arrc_interfaces::srv::GpsOrigin::Response> response) {
         response->coordinates = origin_reset->getOrigin();
       });
