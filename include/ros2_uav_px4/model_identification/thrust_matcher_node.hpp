@@ -107,5 +107,8 @@ private:
   std::vector<std::chrono::nanoseconds> actuator_timestamps_;
   /**< Vector of actuator timestamps. */
   std::vector<std::vector<double>> actuators_;   /**< Vector of actuator values. */
+  bool init_and_armed = false;
+  bool init_z_saved = false;
+  double init_z = 0.0;
 };
 }  // namespace ros2_uav::identification

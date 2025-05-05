@@ -66,8 +66,14 @@ void ThrustMatcher::actuatorMotorsCallback(const ActuatorMotors::SharedPtr actua
 void ThrustMatcher::odometryCallback(const VehicleOdometry::SharedPtr odometry)
 {
   double altitude = -odometry->position[2];
+
+  if (init_and_armed == true && init_z_saved == false) {
+    init_z = altitude;
+    init_z_saved = true;
+  }
+
   // Logic to trigger data collection
-  if (altitude > trigger_altitude_ && status_ == Status::INIT) {
+  if ((altitude - init_z) > trigger_altitude_ && status_ == Status::INIT) {
     if (trigger_counter_ >= trigger_validation_) {
       UAVCPP_INFO_TAG(this, "[Model Identification] Triggering data collection");
       status_ = Status::COLLECTING;
@@ -75,7 +81,7 @@ void ThrustMatcher::odometryCallback(const VehicleOdometry::SharedPtr odometry)
     } else {
       trigger_counter_++;
     }
-  } else if (altitude < trigger_altitude_ && status_ == Status::COLLECTING) {
+  } else if ((altitude - init_z) < trigger_altitude_ && status_ == Status::COLLECTING) {
     if (trigger_counter_ >= trigger_validation_) {
       UAVCPP_INFO_TAG(this, "[Model Identification] Stopping data collection");
       status_ = Status::WAITING_DISARM;
@@ -107,6 +113,10 @@ void ThrustMatcher::accelerationCallback(
 
 void ThrustMatcher::controlModeCallback(const VehicleControlMode::SharedPtr control_mode)
 {
+  if (status_ == Status::INIT && control_mode->flag_armed == true) {
+    init_and_armed = true;
+  }
+
   if (status_ == Status::WAITING_DISARM && control_mode->flag_armed == false) {
     UAVCPP_INFO_TAG(this, "[Model Identification] Disarmed, matching model");
     status_ = Status::MATCHING;
