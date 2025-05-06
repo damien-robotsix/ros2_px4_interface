@@ -70,12 +70,14 @@ void ThrustMatcher::odometryCallback(const VehicleOdometry::SharedPtr odometry)
   if (init_and_armed == true && init_z_saved == false) {
     init_z = altitude;
     init_z_saved = true;
+    RCLCPP_INFO(this->get_logger(), "init_z saved %.2f", init_z);
   }
 
   // Logic to trigger data collection
   if ((altitude - init_z) > trigger_altitude_ && status_ == Status::INIT) {
     if (trigger_counter_ >= trigger_validation_) {
       UAVCPP_INFO_TAG(this, "[Model Identification] Triggering data collection");
+      RCLCPP_INFO(this->get_logger(), "current alt %.2f, init_z %.2f", altitude, init_z);
       status_ = Status::COLLECTING;
       trigger_counter_ = 0;
     } else {
@@ -84,6 +86,7 @@ void ThrustMatcher::odometryCallback(const VehicleOdometry::SharedPtr odometry)
   } else if ((altitude - init_z) < trigger_altitude_ && status_ == Status::COLLECTING) {
     if (trigger_counter_ >= trigger_validation_) {
       UAVCPP_INFO_TAG(this, "[Model Identification] Stopping data collection");
+      RCLCPP_INFO(this->get_logger(), "current alt %.2f, init_z %.2f", altitude, init_z);
       status_ = Status::WAITING_DISARM;
     } else {
       trigger_counter_++;
